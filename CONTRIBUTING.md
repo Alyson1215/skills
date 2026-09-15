@@ -1,0 +1,94 @@
+# Contributing
+
+Skills here are Markdown recipes over the Glasser catalog. This page says what a skill is, what it is not, and what the validator checks so a pull request passes first time.
+
+## What belongs here
+
+A skill is a task someone repeats: research a competitor, build a prospect list, audit a site's search presence. It is not a wrapper around one endpoint; `inspect` already documents endpoints better than prose can.
+
+A skill stops at the result. It produces a report, a table, a memo. It does not send a Slack message, post to Telegram, publish an article, or place an order. Glasser is a data broker and the skills reflect that; anything that acts on the world belongs in the user's own tooling.
+
+## Layout
+
+```
+skills/
+  skill-name/
+    SKILL.md        required; the whole skill
+    references/     optional; long material loaded on demand
+templates/
+  SKILL.template.md   copy this to start a new skill
+  glasser-prereq.md   the prerequisite block, single source
+```
+
+One skill is one directory with one `SKILL.md`. Skills do not nest and do not share files; each one is copied out on its own by installers, so anything it needs has to be inside its directory or behind an https URL.
+
+## Frontmatter
+
+Exactly these fields, nothing else:
+
+```yaml
+---
+name: skill-name
+description: When the user wants ... Also use when the user mentions "...". Input is ...; output is .... Runs on Glasser (paid per call). For ..., see other-skill.
+metadata:
+  version: "0.1.0"
+  category: research
+---
+```
+
+- `name` matches the directory name: 1 to 64 characters, lowercase letters, digits and single hyphens, no leading or trailing hyphen.
+- `description` is 1 to 1024 characters on the same line as `description:`, with no YAML folded (`>`) or literal (`|`) block. It is what the agent matches against, so it carries the trigger phrases, the input, the output, and the neighbouring skills to route away from.
+- `metadata.version` is `x.y.z`. Bump it on every shipped change to the skill.
+- `metadata.category` is a lowercase slug; it groups the README table. Current categories: `research`, `gtm`, `seo`. A new category is fine, the table adapts.
+
+## The prerequisite block
+
+Every `SKILL.md` carries this block verbatim, after the H1 and before the first `##`:
+
+```
+This skill requires Glasser — one Key across many paid data providers. Install it first: https://glasser.ai/SKILL.md covers installation and use.
+
+Use Glasser for all data acquisition here. Reach for another tool only when the Glasser catalog has no endpoint for what is needed.
+```
+
+The single source is `templates/glasser-prereq.md`, and the validator compares against it. To change the wording, change the source file and update every skill in the same pull request.
+
+## Rules
+
+Each rule below says whether the validator enforces it (**checked**) or a reviewer does (**reviewed**).
+
+1. **One skill is one repeated task**, not a wrapper around one endpoint. Reviewed.
+2. **No execution channels.** No sending, posting, publishing, or purchasing. Reviewed.
+3. **No provider names** in the skill name or in the process steps. Write what capability to search for and what to confirm on inspect: "search for backlink profile by domain; confirm the response carries referring domains and first-seen dates". The validator warns on known vendor names inside `## Process`; a reviewer decides. Checked (warning).
+4. **Do not restate the Glasser mechanism**: auth, the verbs, idempotency, run states, balance rules. Link https://glasser.ai/SKILL.md instead. Reviewed.
+5. **Links are same-directory relative paths or https URLs.** No `../`, no `/`-rooted paths. Checked.
+6. **No conversational instructions to the agent.** Do not write "ask the user once" or "confirm before running". Declare what input the skill needs and let the agent's own rules handle the conversation. Permission before spending is the official Glasser skill's rule; do not repeat it. Reviewed.
+7. **Provider choice is by inspected price and measured hit rate**, never by margin. Skills are neutral across providers. Reviewed.
+8. **English only.** The validator rejects CJK characters. Checked.
+9. **One paragraph per line**, no hard wrapping inside a paragraph. Reviewed.
+10. **`description` on one line** with `description:`. Checked.
+11. **No HTML comments.** They ship to the user's machine and cost context. Checked.
+12. **Frontmatter has only** `name`, `description`, `metadata.version`, `metadata.category`. Checked.
+13. **`SKILL.md` under 500 lines.** Move long material to `references/`. Checked.
+14. **Prerequisite block present and verbatim.** Checked.
+
+## Adding a skill
+
+1. Copy `templates/SKILL.template.md` to `skills/<name>/SKILL.md` and fill it in.
+2. Run `node .github/scripts/sync.mjs` to add the skill to the README table and refresh the marketplace count.
+3. Run `node .github/scripts/validate.mjs` and fix anything it reports.
+4. Open a pull request with the new-skill template. Use the branch name `skills/<name>`.
+
+## Changing a skill
+
+Bump `metadata.version` in the same pull request: patch for fixes and clarifications, minor for new dimensions or new trigger phrases. Run the validator before pushing.
+
+## Quality checklist
+
+Before opening the pull request, read the skill as the agent would:
+
+- Does the description alone tell an agent when to pick this skill and when to pick a neighbour?
+- Does every process step say what to search for and what to confirm before running?
+- Does the report format say what goes where, and does it end with what was spent and what could not be found?
+- Would the skill still make sense if every provider in the catalog were swapped for another?
+- Is there anything in it that a reader could get from https://glasser.ai/SKILL.md instead?
