@@ -16,7 +16,7 @@ The Glasser mechanism (auth, search, inspect, run, balance rules) is documented 
   marketplace.json     marketplace manifest; one plugin, source "./"
 .github/
   scripts/validate.mjs check every skill and the repo-level invariants
-  scripts/sync.mjs     regenerate the README skills table and marketplace count
+  scripts/sync.mjs     regenerate the README table, marketplace count and per-skill prerequisite block
   workflows/           validate on PR and push to main; sync check on main
 skills/<name>/SKILL.md one skill per directory
 templates/             SKILL.template.md and glasser-prereq.md; outside skills/ on purpose
@@ -34,13 +34,13 @@ templates/             SKILL.template.md and glasser-prereq.md; outside skills/ 
 - No execution channels: a skill ends at a result, it does not send, post, publish, or buy.
 - No `.mcp.json` here, no `tools/` directory, no `shared/` directory, no copy of glasser.ai/SKILL.md under `skills/`.
 - Nothing under `templates/` is named `SKILL.md`; installers would treat it as a skill.
-- README table and marketplace skill count match `skills/`; `sync.mjs --check` enforces it.
+- README table, marketplace skill count and every skill's prerequisite block are generated; `sync.mjs --check` enforces all three.
 
 ## Commands
 
 ```bash
 node .github/scripts/validate.mjs   # all checks; exit 1 on any error
-node .github/scripts/sync.mjs       # rewrite README table and marketplace count
+node .github/scripts/sync.mjs       # rewrite README table, marketplace count, prerequisite blocks
 node .github/scripts/sync.mjs --check
 ```
 
@@ -55,7 +55,7 @@ Node 20 or later, no dependencies.
 
 ## Changing a skill
 
-Bump `metadata.version` in the same PR. Patch for fixes, minor for new dimensions or triggers. To change the prerequisite wording, edit `templates/glasser-prereq.md` and every `SKILL.md` together.
+Bump `metadata.version` in the same PR. Patch for fixes, minor for new dimensions or triggers. To change the prerequisite wording, edit `templates/glasser-prereq.md` and run `sync.mjs`; commit the source and the rewritten skills together.
 
 ## Versioning
 

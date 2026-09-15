@@ -4,9 +4,13 @@
 //   node .github/scripts/sync.mjs          rewrite README.md and marketplace.json
 //   node .github/scripts/sync.mjs --check  exit 1 if either would change
 //
-// The README table lives between <!-- SKILLS:START --> and <!-- SKILLS:END -->
-// and is grouped by metadata.category. marketplace.json gets its skill count
-// refreshed in plugins[0].description. Zero dependencies; Node 20+.
+// Three things are kept in step:
+//   - the README table between <!-- SKILLS:START --> and <!-- SKILLS:END -->,
+//     grouped by metadata.category
+//   - the skill count at the start of plugins[0].description in marketplace.json
+//   - the prerequisite block in every SKILL.md, which is whatever sits between
+//     the H1 and the first "##" and is rewritten from templates/glasser-prereq.md
+// Zero dependencies; Node 20+.
 
 import { readdirSync, readFileSync, writeFileSync, existsSync } from "node:fs";
 import { join, resolve, dirname } from "node:path";
@@ -16,6 +20,7 @@ const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
 const SKILLS_DIR = join(ROOT, "skills");
 const README_FILE = join(ROOT, "README.md");
 const MARKETPLACE_FILE = join(ROOT, ".claude-plugin/marketplace.json");
+const PREREQ_FILE = join(ROOT, "templates/glasser-prereq.md");
 
 const CHECK = process.argv.includes("--check");
 
@@ -128,9 +133,34 @@ function syncMarketplace(skills) {
   return { ok: true, changed: true, msg: "marketplace.json skill count is out of date; run node .github/scripts/sync.mjs" };
 }
 
+// Rewrites the region between the H1 and the first "##" of each SKILL.md so it
+// is exactly the prerequisite block. Changing the wording is then one edit to
+// templates/glasser-prereq.md followed by one run of this script.
+function syncPrereq(skills) {
+  if (!existsSync(PREREQ_FILE)) return { ok: false, msg: "templates/glasser-prereq.md missing" };
+  const block = readFileSync(PREREQ_FILE, "utf8").replace(/\s+$/, "");
+  const stale = [];
+  for (const s of skills) {
+    const file = join(SKILLS_DIR, s.dir, "SKILL.md");
+    const text = readFileSync(file, "utf8");
+    const lines = text.split("\n");
+    const fmEnd = lines[0] === "---" ? lines.indexOf("---", 1) : -1;
+    const h1 = lines.findIndex((l, i) => i > fmEnd && /^# /.test(l));
+    if (h1 === -1) return { ok: false, msg: `skills/${s.dir}/SKILL.md has no H1; cannot place the prerequisite block` };
+    let firstH2 = lines.findIndex((l, i) => i > h1 && /^## /.test(l));
+    if (firstH2 === -1) firstH2 = lines.length;
+    const next = [...lines.slice(0, h1 + 1), "", ...block.split("\n"), "", ...lines.slice(firstH2)].join("\n");
+    if (next === text) continue;
+    stale.push(s.dir);
+    if (!CHECK) writeFileSync(file, next);
+  }
+  if (!stale.length) return { ok: true, changed: false };
+  return { ok: true, changed: true, msg: `prerequisite block out of date in: ${stale.join(", ")}; run node .github/scripts/sync.mjs` };
+}
+
 function main() {
   const skills = loadSkills();
-  const results = [syncReadme(skills), syncMarketplace(skills)];
+  const results = [syncPrereq(skills), syncReadme(skills), syncMarketplace(skills)];
   const failed = results.filter((r) => !r.ok);
   const changed = results.filter((r) => r.ok && r.changed);
 
