@@ -1,0 +1,5 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Glasser mechanism, CLI or MCP server
+    url: https://github.com/glasser-ai/plugins/issues
+    about: Problems with installing or calling Glasser belong in the plugins repository.

@@ -1,0 +1,25 @@
+name: Sync index
+
+# The README table and marketplace count are generated from skills/. Pull
+# requests already fail when they are stale (validate.mjs runs sync.mjs
+# --check), so this job on main is a safety net: it reports drift, it does not
+# commit. Fix drift locally with `node .github/scripts/sync.mjs`.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "skills/**"
+      - "README.md"
+      - ".claude-plugin/marketplace.json"
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Check README table and marketplace count against skills/
+        run: node .github/scripts/sync.mjs --check

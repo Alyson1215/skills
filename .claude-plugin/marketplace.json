@@ -1,0 +1,19 @@
+{
+  "name": "glasser-skills",
+  "owner": {
+    "name": "Glasser",
+    "url": "https://glasser.ai"
+  },
+  "metadata": {
+    "description": "Business skills for agents on Glasser — recipes over one paid-data catalog, not over one vendor's API",
+    "version": "0.1.0",
+    "repository": "https://github.com/glasser-ai/skills"
+  },
+  "plugins": [
+    {
+      "name": "glasser-skills",
+      "description": "4 skills for agents working on top of Glasser: research, go-to-market and SEO recipes over one paid-data catalog. Requires glasser-ai/plugins or the Glasser CLI.",
+      "source": "./"
+    }
+  ]
+}

@@ -1,0 +1,59 @@
+name: Skill request
+description: Propose a new skill
+title: "Skill request: <skill-name>"
+labels: ["skill-request"]
+body:
+  - type: input
+    id: name
+    attributes:
+      label: Skill name
+      description: Lowercase letters, digits and hyphens. Names the task, not a vendor.
+      placeholder: churn-signals
+    validations:
+      required: true
+  - type: textarea
+    id: task
+    attributes:
+      label: The task
+      description: What does someone ask an agent to do, and what do they get back? A skill is a repeated task, not one endpoint.
+      placeholder: "Given a customer list, find which accounts show signs of leaving: layoffs, funding gaps, tech-stack changes. Output is a ranked table with the evidence per row."
+    validations:
+      required: true
+  - type: textarea
+    id: triggers
+    attributes:
+      label: Trigger phrases
+      description: What does the user say that should select this skill?
+      placeholder: |
+        - "which customers are at risk"
+        - "churn signals for these accounts"
+    validations:
+      required: true
+  - type: textarea
+    id: capabilities
+    attributes:
+      label: Capabilities needed
+      description: What kinds of data does the recipe need? Capabilities, not vendors.
+      placeholder: |
+        - company enrichment by domain (headcount over time)
+        - job postings by company
+        - technology detection by domain
+    validations:
+      required: true
+  - type: dropdown
+    id: category
+    attributes:
+      label: Category
+      options:
+        - research
+        - gtm
+        - seo
+        - other
+    validations:
+      required: true
+  - type: textarea
+    id: neighbours
+    attributes:
+      label: Neighbouring skills
+      description: Which existing skills are close to this one, and where is the line?
+      placeholder: "Close to prospect-list but starts from accounts the user already has."
