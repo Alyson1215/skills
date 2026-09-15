@@ -1,0 +1,12 @@
+{
+  "name": "glasser-skills",
+  "description": "Business skills for agents on Glasser — competitor research, investor diligence, prospect lists, SEO audits — written as recipes over one paid-data catalog",
+  "version": "0.1.0",
+  "author": {
+    "name": "Glasser"
+  },
+  "homepage": "https://glasser.ai",
+  "repository": "https://github.com/glasser-ai/skills",
+  "license": "MIT",
+  "skills": "./skills"
+}
