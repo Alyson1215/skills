@@ -57,6 +57,7 @@ Each skill is one directory with one `SKILL.md` and stands on its own; copy only
 |---|---|
 | [competitor-research](skills/competitor-research/) | When the user wants to research competitors or a rival product in depth — who is behind them, how they are funded, what they sell, how they get traffic, what they are hiring for, and where they are spending. |
 | [investor-diligence](skills/investor-diligence/) | When an investor wants to research a company before putting money in — who runs it, how it is funded, whether the traction is real, what the risks are, and what has changed recently. |
+| [youtube-kol-finder](skills/youtube-kol-finder/) | Find and qualify YouTube creators for product partnerships, sponsorships, or affiliate campaigns from a product description or website, a creator brief, or reference channels. |
 
 ### Go-to-market
 
