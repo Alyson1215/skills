@@ -1,8 +1,8 @@
 ---
 name: investor-diligence
-description: When an investor wants to research a company before putting money in — who runs it, how it is funded, whether the traction is real, what the risks are, and what has changed recently. Also use when the user mentions "due diligence", "diligence on", "should we invest in", "research this startup", "background on this company before the call", "deal memo", "investment memo", or "what do we know about [company]". Input is one or more company names or domains; output is a diligence memo per company and, for several, a comparison. Runs on Glasser (paid per call). For researching rivals to the user's own product, see competitor-research.
+description: When an investor wants to research a company before putting money in — who runs it, how it is funded, whether the traction is real, what the risks are, and what has changed recently. Also use when the user mentions "due diligence", "diligence on", "verify this company", "background on this company before the call", "deal memo", "diligence memo", or "what do we know about [company]". Input is one or more company names or domains; output is a diligence memo per company and, for several, a comparison. Runs on Glasser (paid per call). For a scored investment read with a verdict rather than a verification memo, see startup-analysis. For researching rivals to the user's own product, see competitor-research.
 metadata:
-  version: "0.1.0"
+  version: "0.1.1"
   category: research
 ---
 
