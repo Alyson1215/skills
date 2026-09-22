@@ -57,6 +57,7 @@ Each skill is one directory with one `SKILL.md` and stands on its own; copy only
 |---|---|
 | [competitor-research](skills/competitor-research/) | When the user wants to research competitors or a rival product in depth — who is behind them, how they are funded, what they sell, how they get traffic, what they are hiring for, and where they are spending. |
 | [investor-diligence](skills/investor-diligence/) | When an investor wants to research a company before putting money in — who runs it, how it is funded, whether the traction is real, what the risks are, and what has changed recently. |
+| [product-demand-research](skills/product-demand-research/) | When the user wants to know whether people actually have the problem a product idea solves — what they complain about, what they ask for, what they use instead, and the words they use for it — drawn from public discussion on Reddit, YouTube, TikTok, Hacker-News-style forums and Chinese Q&A platforms. |
 | [startup-analysis](skills/startup-analysis/) | When an investor wants to evaluate a startup as a potential investment — is the market big enough, is the team right, is the traction real, does it have a moat — and come away with a verdict. |
 
 ### Go-to-market
@@ -65,7 +66,7 @@ Each skill is one directory with one `SKILL.md` and stands on its own; copy only
 |---|---|
 | [prospect-list](skills/prospect-list/) | When the user wants a list of companies to sell to and the people to contact at them — from an ICP, a set of filters, a known source such as an investor portfolio or a directory, or a list of company names. |
 
-### SEO
+### SEO/GEO
 
 | Skill | What it does |
 |---|---|
@@ -76,6 +77,9 @@ Each skill is one directory with one `SKILL.md` and stands on its own; copy only
 
 | Skill | What it does |
 |---|---|
+| [ad-intelligence](skills/ad-intelligence/) | When the user wants to see what a company is running in paid ads — on Meta (Facebook, Instagram, Threads), Google, LinkedIn and TikTok — what the ads say, which creatives have run longest, where they send people, and how the messaging differs by platform. |
+| [influencer-prospecting](skills/influencer-prospecting/) | When the user wants creators to work with — influencers, KOLs, UGC creators, affiliates — for a product or category, across TikTok, Instagram, YouTube, X, Threads and LinkedIn, or Douyin, Xiaohongshu, Bilibili, Kuaishou and Weibo for China. |
+| [social-trends](skills/social-trends/) | When the user wants to know what is trending on social platforms — right now across a whole platform, or inside a category they care about — and how those trends move: Douyin, Xiaohongshu, Weibo, Bilibili, Kuaishou and Zhihu on the China side; TikTok, YouTube, Instagram, Reddit and X elsewhere. |
 | [youtube-kol-finder](skills/youtube-kol-finder/) | Find and qualify YouTube creators for product partnerships, sponsorships, or affiliate campaigns from a product description or website, a creator brief, or reference channels. |
 <!-- SKILLS:END -->
 
