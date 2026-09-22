@@ -22,6 +22,8 @@ Install one of:
 
 How an agent calls Glasser is documented in one place: [glasser.ai/SKILL.md](https://glasser.ai/SKILL.md). Every skill here links to it and none of them repeat it.
 
+`skills/glasser/` is a byte-identical mirror of that document's body, kept for skill catalogs that need a GitHub file to pin (its frontmatter carries a shorter description and `metadata.source`). Refresh it after a CLI release with `node scripts/sync-glasser-skill.mjs`.
+
 ## Installation
 
 **With the skills CLI** ([vercel-labs/skills](https://github.com/vercel-labs/skills)):
