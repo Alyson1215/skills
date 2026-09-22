@@ -1,6 +1,6 @@
 ---
 name: competitor-research
-description: When the user wants to research competitors or a rival product in depth — who is behind them, how they are funded, what they sell, how they get traffic, what they are hiring for, and where they are spending. Also use when the user mentions "competitor research", "competitive intelligence", "competitor analysis", "research these competitors", "who are we up against", "what is this company doing", or names two or more rival products to compare. Input is one or more competitor names or domains; output is one profile per competitor and, for several, a comparison summary. Runs on Glasser (paid per call).
+description: Research competitors in depth from a name or domain: who is behind them, how they are funded, what they sell, where their traffic comes from, what they hire for, and where they spend on ads. One profile per competitor, plus a comparison when several are given. Runs on Glasser (paid per call).
 metadata:
   version: "0.1.0"
   category: research
