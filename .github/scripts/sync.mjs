@@ -29,7 +29,7 @@ const CHECK = process.argv.includes("--check");
 const CATEGORY_TITLES = {
   research: "Research",
   gtm: "Go-to-market",
-  seo: "SEO",
+  seo: "SEO/GEO",
 };
 
 function frontmatter(text) {
