@@ -2,9 +2,9 @@
 
 Business skills for agents working on top of [Glasser](https://glasser.ai): each one is a task an agent is actually asked to do, written as a recipe over the Glasser catalog rather than over one vendor's API. One Key, no contract, pay per call.
 
-Other marketing skill libraries hand you the recipe and leave the plumbing to you. This one does not.
+Other skill libraries hand you the recipe and leave the plumbing to you. This one does not.
 
-| | Typical marketing skill library | Glasser skills |
+| | Typical skill library | Glasser skills |
 |---|---|---|
 | **Data access** | One environment variable per vendor; a 35-key `.env` is not unusual | `glasser login`, once |
 | **Vendor lock** | Each skill is written against one API; swap the vendor and the skill breaks | Skills name capabilities; the catalog picks the endpoint |
@@ -58,7 +58,6 @@ Each skill is one directory with one `SKILL.md` and stands on its own; copy only
 | [competitor-research](skills/competitor-research/) | When the user wants to research competitors or a rival product in depth — who is behind them, how they are funded, what they sell, how they get traffic, what they are hiring for, and where they are spending. |
 | [investor-diligence](skills/investor-diligence/) | When an investor wants to research a company before putting money in — who runs it, how it is funded, whether the traction is real, what the risks are, and what has changed recently. |
 | [startup-analysis](skills/startup-analysis/) | When an investor wants to evaluate a startup as a potential investment — is the market big enough, is the team right, is the traction real, does it have a moat — and come away with a verdict. |
-| [youtube-kol-finder](skills/youtube-kol-finder/) | Find and qualify YouTube creators for product partnerships, sponsorships, or affiliate campaigns from a product description or website, a creator brief, or reference channels. |
 
 ### Go-to-market
 
@@ -70,7 +69,14 @@ Each skill is one directory with one `SKILL.md` and stands on its own; copy only
 
 | Skill | What it does |
 |---|---|
+| [ai-search-visibility](skills/ai-search-visibility/) | When the user wants to know whether AI search answers mention or cite their brand — in Google AI Overviews, Google AI Mode, ChatGPT, Perplexity, Gemini, Copilot — which questions trigger it, which pages get cited, who else is cited for the same questions, and how that is changing. |
 | [seo-audit](skills/seo-audit/) | When the user wants to know how their own website is doing in search and what to do about it — an audit of technical health, rankings, keywords, backlinks and competitors, followed by a prioritised action plan; or a repeat of that audit to see what has changed. |
+
+### Marketing
+
+| Skill | What it does |
+|---|---|
+| [youtube-kol-finder](skills/youtube-kol-finder/) | Find and qualify YouTube creators for product partnerships, sponsorships, or affiliate campaigns from a product description or website, a creator brief, or reference channels. |
 <!-- SKILLS:END -->
 
 ## How the pieces fit

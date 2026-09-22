@@ -3,7 +3,7 @@ name: youtube-kol-finder
 description: Find and qualify YouTube creators for product partnerships, sponsorships, or affiliate campaigns from a product description or website, a creator brief, or reference channels. Also use for YouTube KOL discovery, similar creator searches, and creator business email research. Produces an evidence-backed creator shortlist and contact handoff; does not send outreach. Uses Glasser for discovery and enrichment, with free public business contact lookup first.
 metadata:
   version: "0.2.0"
-  category: research
+  category: marketing
 ---
 
 # YouTube KOL finder
