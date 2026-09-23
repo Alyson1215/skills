@@ -22,6 +22,14 @@ const SYNC_SCRIPT = join(ROOT, ".github/scripts/sync.mjs");
 const MAX_LINES = 500;
 const ALLOWED_TOP_KEYS = ["name", "description", "metadata"];
 const ALLOWED_META_KEYS = ["version", "category"];
+
+// Mirrors of a skill published elsewhere. The body is byte-identical to the
+// source, so the prerequisite block and the process-section rules do not
+// apply; the frontmatter is the shape scripts/sync-glasser-skill.mjs writes:
+// top-level `version` (the source's release) and `metadata.source`.
+const MIRRORS = { glasser: "https://glasser.ai/SKILL.md" };
+const MIRROR_TOP_KEYS = ["name", "description", "version", "metadata"];
+const MIRROR_META_KEYS = ["source", "category"];
 const NAME_RE = /^[a-z0-9](?:[a-z0-9-]{0,62}[a-z0-9])?$/;
 const CJK_RE = /[぀-ヿ㐀-䶿一-鿿豈-﫿가-힯＀-￯]/;
 const SEMVER_RE = /^\d+\.\d+\.\d+$/;
@@ -47,7 +55,9 @@ const warn = (where, msg) => warnings.push(`${where}: ${msg}`);
 // anything else as an error rather than guessing.
 // ---------------------------------------------------------------------------
 
-function parseFrontmatter(text, where) {
+function parseFrontmatter(text, where, mirror = false) {
+  const topKeys = mirror ? MIRROR_TOP_KEYS : ALLOWED_TOP_KEYS;
+  const metaKeys = mirror ? MIRROR_META_KEYS : ALLOWED_META_KEYS;
   const lines = text.split("\n");
   if (lines[0] !== "---") {
     error(where, "file must start with a '---' frontmatter line");
@@ -72,8 +82,8 @@ function parseFrontmatter(text, where) {
         continue;
       }
       const [, key, rawValue = ""] = m;
-      if (!ALLOWED_TOP_KEYS.includes(key)) {
-        error(where, `frontmatter key '${key}' is not allowed (only ${ALLOWED_TOP_KEYS.join(", ")})`);
+      if (!topKeys.includes(key)) {
+        error(where, `frontmatter key '${key}' is not allowed (only ${topKeys.join(", ")})`);
         continue;
       }
       if (key === "metadata") {
@@ -100,8 +110,8 @@ function parseFrontmatter(text, where) {
         continue;
       }
       const [, key, rawValue] = m;
-      if (!ALLOWED_META_KEYS.includes(key)) {
-        error(where, `metadata key '${key}' is not allowed (only ${ALLOWED_META_KEYS.join(", ")})`);
+      if (!metaKeys.includes(key)) {
+        error(where, `metadata key '${key}' is not allowed (only ${metaKeys.join(", ")})`);
         continue;
       }
       fm.metadata[key] = unquote(rawValue.trim());
@@ -129,7 +139,8 @@ function validateSkill(dir) {
     return null;
   }
   const text = readFileSync(file, "utf8");
-  const parsed = parseFrontmatter(text, where);
+  const mirror = Object.hasOwn(MIRRORS, dir);
+  const parsed = parseFrontmatter(text, where, mirror);
   if (!parsed) return null;
   const { fm, bodyStart, lines } = parsed;
 
@@ -146,9 +157,16 @@ function validateSkill(dir) {
   if (!fm.description) error(where, "missing 'description'");
   else if (fm.description.length > 1024) error(where, `description must be 1-1024 chars (is ${fm.description.length})`);
 
-  // metadata
-  if (!fm.metadata.version) error(where, "missing 'metadata.version'");
-  else if (!SEMVER_RE.test(fm.metadata.version)) error(where, `metadata.version '${fm.metadata.version}' is not x.y.z`);
+  // version: a mirror carries the source's release at the top level, a skill
+  // authored here carries its own under metadata.
+  if (mirror) {
+    if (!fm.version) error(where, "missing 'version' (the source's release)");
+    else if (!SEMVER_RE.test(fm.version)) error(where, `version '${fm.version}' is not x.y.z`);
+    if (fm.metadata.source !== MIRRORS[dir]) error(where, `metadata.source must be ${MIRRORS[dir]}`);
+  } else {
+    if (!fm.metadata.version) error(where, "missing 'metadata.version'");
+    else if (!SEMVER_RE.test(fm.metadata.version)) error(where, `metadata.version '${fm.metadata.version}' is not x.y.z`);
+  }
   if (!fm.metadata.category) error(where, "missing 'metadata.category'");
   else if (!NAME_RE.test(fm.metadata.category)) error(where, `metadata.category '${fm.metadata.category}' must be lowercase letters, digits and hyphens`);
 
@@ -165,8 +183,11 @@ function validateSkill(dir) {
     if (l.includes("](/")) error(where, `line ${n}: root-relative link; only same-directory paths and https URLs work`);
   });
 
-  checkPrereqBlock(where, body);
-  checkProviderNames(where, body, bodyStart);
+  // The body of a mirror is the published document, not a recipe on top of it.
+  if (!mirror) {
+    checkPrereqBlock(where, body);
+    checkProviderNames(where, body, bodyStart);
+  }
 
   // sibling files inside the skill directory
   for (const entry of readdirSync(join(SKILLS_DIR, dir))) {

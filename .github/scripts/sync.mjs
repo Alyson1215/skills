@@ -9,7 +9,8 @@
 //     grouped by metadata.category
 //   - the skill count at the start of plugins[0].description in marketplace.json
 //   - the prerequisite block in every SKILL.md, which is whatever sits between
-//     the H1 and the first "##" and is rewritten from templates/glasser-prereq.md
+//     the H1 and the first "##" and is rewritten from templates/glasser-prereq.md;
+//     a mirror (frontmatter with metadata.source) keeps its published body as is
 // Zero dependencies; Node 20+.
 
 import { readdirSync, readFileSync, writeFileSync, existsSync } from "node:fs";
@@ -71,7 +72,8 @@ function loadSkills() {
         name: fm.name || e.name,
         description: fm.description || "",
         category: fm.metadata.category || "other",
-        version: fm.metadata.version || "",
+        version: fm.metadata.version || fm.version || "",
+        mirror: Boolean(fm.metadata.source),
       };
     })
     .sort((a, b) => a.name.localeCompare(b.name));
@@ -141,6 +143,7 @@ function syncPrereq(skills) {
   const block = readFileSync(PREREQ_FILE, "utf8").replace(/\s+$/, "");
   const stale = [];
   for (const s of skills) {
+    if (s.mirror) continue;
     const file = join(SKILLS_DIR, s.dir, "SKILL.md");
     const text = readFileSync(file, "utf8");
     const lines = text.split("\n");
