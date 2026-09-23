@@ -32,7 +32,8 @@ templates/             SKILL.template.md and glasser-prereq.md; outside skills/ 
 - No HTML comments, no CJK characters, under 500 lines.
 - No provider names in skill names or process steps. Describe the capability to search for and what to confirm on inspect.
 - No execution channels: a skill ends at a result, it does not send, post, publish, or buy.
-- No `.mcp.json` here, no `tools/` directory, no `shared/` directory, no copy of glasser.ai/SKILL.md under `skills/`.
+- No `.mcp.json` here, no `tools/` directory, no `shared/` directory.
+- `skills/glasser/` is the one mirror of glasser.ai/SKILL.md: body byte-identical to the source, frontmatter `name`, `description`, `version`, `metadata.source`, `metadata.category`, no prerequisite block. Regenerate it with `node scripts/sync-glasser-skill.mjs`; never edit it by hand.
 - Nothing under `templates/` is named `SKILL.md`; installers would treat it as a skill.
 - README table, marketplace skill count and every skill's prerequisite block are generated; `sync.mjs --check` enforces all three.
 
