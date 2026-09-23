@@ -57,7 +57,8 @@ Each skill is one directory with one `SKILL.md` and stands on its own; copy only
 
 | Skill | What it does |
 |---|---|
-| [competitor-research](skills/competitor-research/) | When the user wants to research competitors or a rival product in depth — who is behind them, how they are funded, what they sell, how they get traffic, what they are hiring for, and where they are spending. |
+| [competitor-research](skills/competitor-research/) | Research competitors in depth from a name or domain: who is behind them, how they are funded, what they sell, where their traffic comes from, what they hire for, and where they spend on ads. |
+| [glasser](skills/glasser/) | Find and call 1,000+ paid data endpoints with one key: person and company enrichment, people and company search, web, news, maps, scholar and shopping search, SEO, social media, US property data, scraping. |
 | [investor-diligence](skills/investor-diligence/) | When an investor wants to research a company before putting money in — who runs it, how it is funded, whether the traction is real, what the risks are, and what has changed recently. |
 | [product-demand-research](skills/product-demand-research/) | When the user wants to know whether people actually have the problem a product idea solves — what they complain about, what they ask for, what they use instead, and the words they use for it — drawn from public discussion on Reddit, YouTube, TikTok, Hacker-News-style forums and Chinese Q&A platforms. |
 | [startup-analysis](skills/startup-analysis/) | When an investor wants to evaluate a startup as a potential investment — is the market big enough, is the team right, is the traction real, does it have a moat — and come away with a verdict. |
