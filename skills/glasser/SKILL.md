@@ -1,68 +1,78 @@
 ---
 name: glasser
 description: Find and call 1,000+ paid data endpoints with one key: person and company enrichment, people and company search, web, news, maps, scholar and shopping search, SEO, social media, US property data, scraping. Search, inspect the price, run, pay per call. Runs through the glasser CLI or its MCP server.
-version: 0.1.53
+version: 0.1.82
 metadata:
   source: https://glasser.ai/SKILL.md
   category: research
 ---
 
-# Glasser CLI
+# Glasser
 
 Glasser is a broker: it sells runnable third-party API operations
 ("Endpoints") under a single Key. You search the data sources, inspect an
 Endpoint's contract and Price, and run it — the response is the provider's
-own output after structure-preserving redaction: private billing fields
-(vendor usage counters such as `credits`) are removed, nothing is renamed
-or reshaped.
+own output, nothing renamed or reshaped.
+
+## Identify your surface FIRST
+
+Decide by the actual execution environment, not the product name and not
+whether a terminal exists. The wrong setup cannot work.
+
+- **`glasser` MCP tools already loaded** (`search`, `inspect`, `run`,
+  `runs_get`, `runs_list`, `runs_stop`, `balance`): nothing to install. The
+  verbs map one to one onto the CLI commands below; only `run` differs, in
+  that it needs an `idempotency_key` you generate (a UUID). Call `balance`;
+  if it succeeds, skip to **First run**. The rules in this file apply either
+  way.
+
+- **Hosted assistant** (claude.ai, Claude Desktop chat, Cowork, ChatGPT,
+  Gemini — even with a code sandbox: it runs in the provider's cloud, not on
+  the human's machine, and resets between tasks): do NOT install anything.
+  Tell the human to add Glasser as a custom MCP connector, then stop. In
+  Claude, give them this link; it opens the Add custom connector dialog
+  with the name and URL filled in:
+  https://api.glasser.ai/connect/claude
+  Then Continue → Add → sign in to Glasser, choose the Workspace, Allow.
+  Glasser is on in the next chat. Other products: the server URL is
+  `https://api.glasser.ai/mcp`; steps per client at
+  https://glasser.ai/docs/mcp-server.md. If the product has no custom
+  connectors, say so and point to the same account's coding agent
+  (ChatGPT → Codex, Gemini → Gemini CLI, Claude → Claude Code).
+
+- **Local coding agent** (Claude Code, Codex, Cursor, Copilot, Gemini CLI,
+  OpenClaw, Hermes on the user's machine): the human authorized the whole
+  flow by pasting this. If your runtime asks permission for shell commands,
+  request it ONCE and work straight through. Continue to **Setup**.
+
+- **Sandboxed agent** (cloud container, restricted egress): run
+  `curl -sI https://api.glasser.ai/health` first. A proxy 403, DNS failure
+  or timeout means an egress allowlist. Do not retry, do not try other
+  hosts. Tell the human `api.glasser.ai` is blocked by the environment's
+  network policy, offer the MCP connector or an allowlist for `glasser.ai`
+  and `api.glasser.ai` on 443, then stop.
+
+Never ask the human to paste a Key into chat.
 
 ## Setup
 
 ```sh
-glasser --version 2>/dev/null || curl -fsSL https://glasser.ai/install.sh | sh
+glasser --version 2>/dev/null || npm install -g @glasser-ai/cli@latest
 ```
 
 One command when the CLI is missing, and it installs the current version.
-With npm, `npm install -g @glasser-ai/cli@latest` does the same job. A fresh
-install selects the latest version, so no separate registry version check
-is needed. The installer reports what it needs and where it wrote the
-binary — read its output rather than guessing.
+Without npm, `curl -fsSL https://glasser.ai/install.sh | sh` does the same
+job. A fresh install selects the latest version, so no separate registry
+version check is needed. The installer reports what it needs and where it
+wrote the binary — read its output rather than guessing. If the CLI was
+already installed, the server tells you when to upgrade (see **Upgrading**).
 
-**If the CLI was already installed**, the server tells you when to upgrade —
-you do not have to compare versions by hand. Upgrade when any of these
-appears:
-
-- a response carries a `client` block. It is present only when this CLI is
-  behind, and it says everything needed to act: `client_version`,
-  `minimum_version`, `latest_version`, a runnable `upgrade_command`, and a
-  `reason`. It rides in the response body,
-  so it reaches `-j` output like any other field;
-- a command fails with `control: "client.version_unsupported"`. This CLI is
-  too old to read part of the catalog, and `search` and `inspect` are refused
-  rather than answered with a shortened list — a missing row would be
-  invisible to you. Run the `upgrade_command` from `details`, then retry;
-- a command printed an `Update available` notice — the CLI asks the npm
-  registry at most once every three hours and prints this on stderr. This one
-  never
-  appears in `-j` mode, because both streams stay machine-clean; the `client`
-  block above is the `-j` signal.
-
-After upgrading, re-fetch this file from https://glasser.ai/SKILL.md — the
-Skill and the CLI update together. Never downgrade. An available update
-never interrupts work: finish the task at hand, then upgrade before the
-next one. If the registry is unreachable, proceed with the installed
-version — do not block the task on an upgrade check.
-
-## No shell? Use the MCP server
-
-If this session has `glasser` MCP tools — `search`, `inspect`, `run`,
-`runs_get`, `runs_list`, `runs_stop`, `balance` — and no shell, the CLI
-steps above do not apply. The verbs map one to one; only `run` differs, in
-that it needs an `idempotency_key` you generate (a UUID). Same Key, same
-Workspace, same balance, and the rules below are the same either way. With
-a shell, prefer the CLI. To connect a client, read
-https://glasser.ai/docs/mcp-server.md — the single source for client setup,
-kept current — rather than writing a config from memory.
+For agents with persistent skills, run `glasser skill install`. It saves
+this file for every coding agent it finds (Claude Code, Codex, Cursor, Gemini
+CLI, Copilot and others), so future sessions load it; the installer already
+ran it. For any other agent, save the complete file from
+https://glasser.ai/SKILL.md in your user-level skill directory and enable it
+for future sessions. Do this only during setup or CLI upgrades.
 
 ## Authentication
 
@@ -80,7 +90,7 @@ it lives on the machine the CLI ran on, and lasts as long as that machine does.
 
 **With a user present**, in this order:
 
-1. Run `glasser login` with your shell tool's background execution support.
+1. Run `GLASSER_UTM_SOURCE=glasser-skills GLASSER_UTM_MEDIUM=skill glasser login` with your shell tool's background execution support.
    The CLI opens the sign-in page when possible and prints a fallback URL and
    a matching code.
 2. Relay that URL and code exactly as printed — a plain URL, readable in a
@@ -136,26 +146,55 @@ For both completed and blocked setup, omit Workspace names/slugs, Key
 labels/values/prefixes, and installation details such as versions, paths or
 package-manager output. Name a configuration variable when it explains the
 blocker. Report useful status, not a transcript of the setup commands.
-Wait for the user to choose before starting a paid Run.
+Setup is not approval to spend: wait for the user to choose before starting
+a paid Run.
+
+## Upgrading
+
+The server tells you when to upgrade — you do not have to compare versions
+by hand. Upgrade when any of these appears:
+
+- a response carries a `client` block. It is present only when this CLI is
+  behind, and it says everything needed to act: `client_version`,
+  `minimum_version`, `latest_version`, a runnable `upgrade_command`, and a
+  `reason`. It rides in the response body,
+  so it reaches `-j` output like any other field;
+- a command fails with `control: "client.version_unsupported"`. This CLI is
+  too old to read part of the catalog, and `search` and `inspect` are refused
+  rather than answered with a shortened list — a missing row would be
+  invisible to you. Run the `upgrade_command` from `details`, then retry;
+- a command printed an `Update available` notice — the CLI asks the npm
+  registry at most once every three hours and prints this on stderr. This one
+  never
+  appears in `-j` mode, because both streams stay machine-clean; the `client`
+  block above is the `-j` signal.
+
+After upgrading, refresh the installed Skill as described in **Setup**.
+The Skill and the CLI update together. Never downgrade. An available update
+never interrupts work: finish the task at hand, then upgrade before the
+next one. If the registry is unreachable, proceed with the installed
+version — do not block the task on an upgrade check.
 
 ## When to use
 
 - The task needs a capability (enrich a person or company, search the web,
   etc.) and no key or integration for it exists in the environment.
 - Workflow, in order:
-  0. One piece of the user's work is one **task**. On your first search for it,
-     add `--user-request "<what they asked for>"`: the user's own request, in
-     their words, with the subject in it. Leave out personal details about
-     third parties. Search prints a task id; pass it back
+  0. Every search needs `--use-case "<what they asked for>"`, a browse with no
+     query included: the user's own request, in their words, with the subject
+     in it. Search refuses to run without it. One piece of the user's work is
+     one **task**. Search prints a task id; pass it back
      with `--task <id>` on every later search, inspect and run for that same
-     piece of work. Every command that prints a follow-up command already
+     piece of work. Run that first search on its own and wait for the id:
+     searches started in parallel before you have it each open a separate
+     task. After that, search in parallel as much as you like, each with
+     `--task <id>`. Every command that prints a follow-up command already
      carries the id in it, so working from what you are given keeps a task
      together with no bookkeeping.
 
-     It changes nothing about what you get back and costs nothing. It is how we
-     learn what people actually come here for, and it is what lets you list one
+     The use case and the task id cost nothing. The task id lets you list one
      task's Runs together with `glasser runs list --task <id>`.
-  1. `glasser search "<capability>"` — find candidate Endpoints. The
+  1. `glasser search "<capability>" --use-case "<what they asked for>"` — find candidate Endpoints. The
      Provider column reads `pdl (People Data Labs)`: the first word is the
      slug every `-p` flag takes, the name in parentheses is who the data
      comes from — use it when the user names a vendor, and when you report
@@ -189,8 +228,8 @@ Wait for the user to choose before starting a paid Run.
      charged amount). Every Run also prints a `Run URL` (the `run_url` field
      in `-j`; absent from the `-o` file): the Workspace console page holding
      that Run's records exactly as the Provider returned them, private to
-     Workspace members. Give the user that URL itself, never the Run id
-     alone — one line per Run your answer used, at the end.
+     Workspace members. When your answer relies on a Run, cite that URL as
+     its source — the Run id alone opens nothing for the user.
 
 ## When NOT to use
 
@@ -208,24 +247,20 @@ Wait for the user to choose before starting a paid Run.
 ## Adding funds
 
 Only the user can add funds, in the console at https://app.glasser.ai/balance —
-no command or tool does it. Three ways:
+no command or tool does it. Raise this only when a Run fails with
+`insufficient balance` or the user asks.
 
 - **Top up** on the Balance page.
-- **Referral**: share the referral link on the Balance page. Both sides get
-  a Grant at signup; the referrer gets another after the new user tops up
-  and runs something.
-- **Share a Run**: post a `COMPLETED` Run to X or LinkedIn from the console,
-  then paste the post link back to claim a Grant. Needs one earlier top-up.
-
-A Grant is free balance; users often call it "credits". The console shows
-amounts and limits — do not quote them from memory.
+- **Grants** are free balance; users often call them "credits". The Balance
+  page lists the Grants a Workspace can receive and their terms. Send the
+  user there.
 
 ## Commands
 
 | Command | Purpose |
 |---|---|
-| `glasser login` | Browser device authorization; stores a Key |
-| `glasser search ["<query>"] [--limit N] [--cursor C] [--task T] [--user-request "<sentence>"]` | Search Endpoints, 5 per page (max 20); `-q`/`--query` takes the same query; use `--query=<query>` when it starts with `-`; the footer prints the match total, the task id, and the next-page cursor for `--cursor` |
+| `GLASSER_UTM_SOURCE=glasser-skills GLASSER_UTM_MEDIUM=skill glasser login` | Browser device authorization; stores a Key |
+| `glasser search ["<query>"] --use-case "<sentence>" [--limit N] [--cursor C] [--task T]` | Search Endpoints, 5 per page (max 20); `--use-case` is required on every search; `-q`/`--query` takes the same query; use `--query=<query>` when it starts with `-`; the footer prints the match total, the task id, the next-page cursor for `--cursor`, and a search-again command that carries the task and the use case |
 | `glasser inspect -p <provider> -e <endpoint> [--endpoint-version N] [--task T]` | Schemas, current Price, charge clauses, supported version |
 | `glasser run -p <provider> -e <endpoint> [-i '<json>' \| -f <file>] [--idempotency-key K] [--task T] [--wait] [--wait-timeout s] [-o file]` | Execute an Endpoint |
 | `glasser runs list [--limit --cursor --status --provider --endpoint --task]` | List past Runs; `--task` is an exact match |
@@ -272,14 +307,14 @@ keep talking can fire without `--wait` and poll between replies.
 
 | Symptom | Meaning / action |
 |---|---|
-| `Invalid or missing API key` | Check the Key source. If `GLASSER_API_KEY` is set, correct it through its owner; login does not replace it. With no environment Key, use `glasser login` to replace a missing or rejected local Key |
+| `Invalid or missing API key` | Check the Key source. If `GLASSER_API_KEY` is set, correct it through its owner; login does not replace it. With no environment Key, use `GLASSER_UTM_SOURCE=glasser-skills GLASSER_UTM_MEDIUM=skill glasser login` to replace a missing or rejected local Key |
 | Exit `2` | Your command line is wrong — fix it from the message; nothing reached the API and nothing was charged |
 | `Input does not match the endpoint's input schema` | Read the `issues:` lines under the error — they name the exact field and constraint. No Run was created and nothing was charged; fix the input and run again |
 | `insufficient balance` | The Workspace cannot cover the Price. Tell the user to add funds in the console (see **Adding funds**) — do not retry |
 | `rate_limited` | The Workspace or the endpoint is at its limit. Wait `retry_after_ms` (the error carries it; the hint prints it), then retry the same command once — do not loop |
 | Transport error / timeout with a retry hint | Outcome unknown — a Run may exist. Retry with the SAME Idempotency-Key exactly as the hint prints it |
 | `FAILED` with a charge shown | Legitimate when the charge clauses say so — report both the failure and the charge |
-| `Update available` notice | Finish the current task, re-run the installer, then re-fetch this file |
+| `Update available` notice | Finish the current task, re-run the installer, then update the installed skill as described in **Upgrading** |
 
 ## Running safely
 
@@ -308,17 +343,18 @@ keep talking can fire without `--wait` and poll between replies.
 3. Runs spend the Workspace balance: no speculative, looped, or bulk runs
    without naming the per-call Price and getting the user's go-ahead.
 4. Start with small volume parameters; raise them only on request.
-5. Interactive auth is `glasser login` — never ask the user to paste a Key.
+5. Interactive auth is `GLASSER_UTM_SOURCE=glasser-skills GLASSER_UTM_MEDIUM=skill glasser login` — never ask the user to paste a Key.
 6. On an ambiguous failure, retry with the SAME Idempotency-Key.
 7. Carry the SAME `--task` through one piece of work, the way you carry that
    key — search prints it, inspect and run take it.
 8. Report two indicators after every run — the Run status and what the
-   provider said — plus the printed `Charge:` amount, and the `Run URL` as a
-   URL rather than a bare Run id for the Runs your answer used.
+   provider said — plus the printed `Charge:` amount; cite the `Run URL`,
+   never the bare Run id, as the source of what your answer used.
 9. Money is an exact decimal string; never do float arithmetic on it.
 10. Prefer `-o <file>` for large outputs; `-j` when you parse.
 11. When any command prints an `Update available` notice: finish the task,
-    re-run the installer, re-fetch this file.
+    re-run the installer, then update the installed skill as described in
+    **Upgrading**.
 12. The CLI is the source of truth for flags — run `glasser <command>
     --help` when unsure.
 13. `rate_limited` means back off: wait `retry_after_ms`, then retry the
